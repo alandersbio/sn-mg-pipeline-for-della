@@ -1,0 +1,10 @@
+name: binningSnakemake
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+dependencies:
+  - samtools
+  - metabat2=>2.15
+  - maxbin2=>2.2
+  - fraggenescan=>1.31

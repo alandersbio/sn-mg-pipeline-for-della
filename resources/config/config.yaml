@@ -1,0 +1,118 @@
+samples:
+  # update your samples.txt file with the paths to R1 and R2
+  'resources/config/mtDNA_samples.txt'
+
+units: resources/config/mtDNA_units.txt
+
+binning: resources/config/binning.txt
+
+reads:
+  - R1
+  - R2
+
+assemblers:
+#  - metaspades
+  - megahit
+
+biobakery:
+  - metaphlan
+
+mappers:
+  - minimap2
+#  - bowtie2
+
+binners:
+  - concoct
+  - metabat2
+  - maxbin2
+
+profilers:
+  - kraken2
+  - bracken
+
+params:
+  cutadapt:
+    adapter: '-a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT -A GGGGGGGGGGGGGGGGGGGG -a GGGGGGGGGGGGGGGGGGGG'  # -a for R1 adapters and -A for R2 adapters
+    other: "--minimum-length 1 --nextseq-trim 20 -u 10 -U 10" #trims 10 bp from the start of every read
+  multiqc: ''
+  bowtie2:
+    bt2_command: 'bowtie2'
+    bt2b_command: 'bowtie2-build'
+    extra: '--very-fast'
+  sourmash:
+    k: 31
+    scaled: 1000
+    extra: ''
+  metaphlan:
+    db_path: "/scratch/gpfs/al8216/db/metaphlan" #maybe it actually needs the backslash at end of db_path
+    db_name: "mpa_vJun23_CHOCOPhlAnSGB_202403" #check after downloading?
+    other: "--add_viruses --unclassified_estimation"
+  metaquast:
+    reference_dir: "resources/db/metaquast/"
+    extra: ''
+  minimap2:
+    x: 'sr'
+    k: 500000000
+  prototypes:
+    min_seqs: 50 # recommended: 10000000
+    max_seqs: 100000000
+    n: 12
+  metabat2:
+    extra: '--verbose'
+    min_contig_length: 1500 # Minimum size of a contig for binning (should be >=1500).
+  maxbin2:
+    prob_threshold: 0.8
+    extra: ''
+    min_contig_length: 1500
+  concoct:
+    chunk_size: 10000
+    overlap_size: 0
+    min_contig_length: 1500
+  das_tool:
+    search_engine: 'diamond'
+  kraken2:
+    levels: 'P,C,O,F,G,S'
+    db: '/scratch/gpfs/al8216/db/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/kraken2' #check whether it's actually "/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/kraken2"
+    bracken-db: '/scratch/gpfs/al8216/db/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/bracken' #check whether path within kraken2 db is right
+
+threads:
+  fastqc: 1
+  cutadapt_pe: 4
+  host_filter: 8
+  spades: 8
+  metaquast: 8
+  megahit: 16
+  kraken2: 16
+  metaphlan: 8
+  bowtie2_build: 8
+  map_reads: 8
+  sort_bam: 8
+  minimap2_index: 8
+  minimap2_map_reads: 8
+  concoct: 8
+  run_metabat2: 8
+  run_maxbin2: 8
+  run_concoct: 8
+  run_DAS_Tool: 8
+
+mem_mb:
+  spades: 256000
+  megahit: 256000
+
+host_filter:
+  db_dir: resources/db/bt2
+  genome: resources/db/bt2/GCA_000001635.9_GRCm39_genomic.fna # PhiX for test purposes "/
+
+  # NCBI GenBank Accession number for the host genome assembly.
+  # This will be automatically downloaded and indexed in the location
+  # {db_dir}/{accn}.
+  # Some Useful Accession Numbers:
+  # Latest builds as of 12-July-2021
+  # Genome Reference Consortium Human Build 38 patch release 13 (GRCh38.p13)
+  # accn: GCA_000001405.28
+  # Genome Reference Consortium Mouse Build 39
+  # accn: GCA_000001635.9
+  # Setophaga coronata coronata (myrtle warbler) (mywa_2.1) - Cornell University
+  # accn: GCA_001746935.2
+  # E coli
+  # accn: GCA_000005845.2
